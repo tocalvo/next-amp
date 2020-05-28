@@ -13,10 +13,10 @@ const Conditionals = () => {
                     <div>{`{{title}}`} -> {`{{slug}}`}</div>
                     {`{{#content}}`}
                     type: {`{{type}}`}
-                    <div className="{{type}}" data-amp-bind-hidden="type != 0">
+                    <div className="{{type}}" data-amp-bind-hidden="'{{type}}' != 'zigzag'">
                         zigzag type showed
                     </div>
-                    <div data-amp-bind-hidden="type != 1">
+                    <div data-amp-bind-hidden="'{{type}}' != 'fullimg'">
                         fullimg type showed
                     </div>
                     {`{{/content}}`}
@@ -35,3 +35,11 @@ export default Conditionals
                             {`{{/src}}`}
                         </div>
                         <div className="right"></div> */}
+
+                        // no pirula?¿?¿
+                    //     <div className="{{type}}" data-amp-bind-hidden="type != 0">
+                    //     zigzag type showed
+                    // </div>
+                    // <div data-amp-bind-hidden="type != 1">
+                    //     fullimg type showed
+                    // </div>
