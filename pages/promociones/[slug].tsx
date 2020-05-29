@@ -1,44 +1,58 @@
-import { useRouter } from 'next/router'
+
 export const config = { amp: true }
 
-const Promotion = () => {
-    const router = useRouter()
-    const { slug } = router.query
-    debugger
+export const getServerSideProps = async ({ params }) => {
+    return { props: { slug: params.slug } }
+}
 
+const ConditionalSlug = ({ slug }) => {
     return (
         <div>
-            <h2>Prueba Slug</h2>
-            <p>Que no pirula en amp only</p>
-            <p>Promotion Slug: {slug}</p>
+            <h1>Prueba Conditionals</h1>
+            <p>{slug}</p>
 
-            <h2>Prueba a descarga desde un endpoint</h2>
-            <p>Que No se refresca hasta hacer un setState</p>
-            <amp-state id="patata" src="//localhost:3000/api/page-info?slug=potato"></amp-state>
-            <p data-amp-bind-text="'Hello ' + patata.title">Hello World</p>
-            <p data-amp-bind-text="'Hello ' + foo">Hello World</p>
-            <button on="tap:AMP.setState({foo: 'amp-bind'})">Say "Hello amp-bind"</button>
-
-            <h2>Prueba desde un json a pincho</h2>
-            <p>Tampoco funciona, to cristo dice q se use amp-list aunque sea con un solo objeto, q se hace para no interferir en la carga inicial</p>
-            <amp-state id="lemon">
-                {` <script type="application/json">
-                    {
-                        "title": "limon",
-                        "slug": "lemon"
-                    }
-                </script>`}
-            </amp-state>
-            <p data-amp-bind-text="'Hello ' + lemon.title"></p>
-
-            <h2>Prueba de un listado</h2>
-            <amp-list src="/api/page-info" layout="fixed-height" height="100">
+            <h2>Obtener elemento de un listado</h2>
+            {/* 
+            No usar rutas relativas ya que se cargará en otro dominio, tiene q ser https...
+            meterle cors https://github.com/vercel/next.js/blob/canary/examples/api-routes-cors/pages/api/cors.js
+            meterle https para jugar en local https://stackoverflow.com/questions/55304101/https-on-localhost-using-nextjs-express
+            generar estaticas? no por si tocan en contenful
+             */}
+            <amp-list src={`http://localhost:3000/api/page-info?slug=${slug}`} layout="fixed-height" height="100" id="page">
                 <template type="amp-mustache">
-                    <div>{`{{title}}`}: {`{{slug}}`}</div>
+                    <div>{`{{title}}`} : {`{{slug}}`}</div>
+                    {`{{#content}}`}
+                    type: {`{{type}}`}
+                    <div className="{{type}}" data-amp-bind-hidden="'{{type}}' != 'zigzag'">
+                        <div className="left" >
+                            {`{{#left}}`}
+                            <amp-img
+                                alt="'{{alt}}'"
+                                src="notfound.jpg"
+                                data-amp-bind-src="'{{src}}'"
+                                layout="fixed"
+                                width="306"
+                                height="166"
+                            >
+                            </amp-img>
+                            {`{{/left}}`}
+                        </div>
+                        <div className="right">
+                            {`{{#right}}`}
+                            <h3>{'{{title}}'}</h3>
+                            <p>{'{{description}}'}</p>
+                            {`{{/right}}`}
+                        </div>
+                    </div>
+                    <div data-amp-bind-hidden="'{{type}}' != 'fullimg'">
+                        fullimg type showed
+                    </div>
+                    {`{{/content}}`}
                 </template>
             </amp-list>
         </div >)
 
 }
 
-export default Promotion
+
+export default ConditionalSlug
